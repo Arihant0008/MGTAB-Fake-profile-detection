@@ -1,0 +1,59 @@
+version: '3.9'
+
+services:
+  # ---- Frontend (Nginx) ----
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    environment:
+      - VITE_API_BASE_URL=http://localhost:3001/api/v1
+    networks:
+      - mgtab-net
+
+  # ---- Backend (Node.js + Python) ----
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+      - PYTHON_PATH=python3
+      - INFERENCE_SCRIPT_PATH=/app/inference/inference_v1.py
+      - MODEL_PATH=/app/inference/models/mlp_v1.pt
+      - NORMALIZATION_STATS_PATH=/app/inference/models/normalization_stats.json
+      # Note: KEEP ENABLE_MONGODB=false for V1 to use in-memory history instead of a live DB cluster
+      - ENABLE_MONGODB=false
+      - ENABLE_FULL_GNN=false
+      - ENABLE_LABSE=false
+      - LOG_LEVEL=info
+    volumes:
+      - ./inference/models:/app/inference/models:ro
+    depends_on:
+      - mongo
+    networks:
+      - mgtab-net
+
+  # ---- MongoDB (optional for V1) ----
+  mongo:
+    image: mongo:7
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - mgtab-net
+
+volumes:
+  mongo-data:
+
+networks:
+  mgtab-net:
+    driver: bridge

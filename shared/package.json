@@ -1,0 +1,16 @@
+{
+  "name": "@mgtab/shared",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "MGTAB Detector — Shared types, schemas, and constants",
+  "main": "constants.js",
+  "exports": {
+    "./constants": "./constants.js",
+    "./schemas": "./schemas.js",
+    "./types": "./types.js"
+  },
+  "dependencies": {
+    "zod": "^4.3.6"
+  }
+}

@@ -1,0 +1,62 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build outputs
+dist/
+build/
+*.js.map
+
+# Environment — NEVER commit real secrets
+.env
+.env.local
+.env.*.local
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+venv/
+.venv/
+
+# Model files — excluded by default (large binaries)
+# EXCEPTION: inference/models/ is explicitly INCLUDED for Railway deployment
+*.pt
+*.pth
+!inference/models/mlp_v1.pt
+
+# Normalization stats — include for deployment
+# (normalization_stats.json is small and required at runtime)
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Testing
+coverage/
+.nyc_output/
+
+# Docker volumes
+.docker/
+
+# TypeScript build info
+*.tsbuildinfo
+
+# Temp files
+tsc.err
+rewrite.js

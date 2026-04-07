@@ -1,0 +1,46 @@
+# ---- Stage 1: Build Node.js backend ----
+FROM node:20-alpine AS builder
+WORKDIR /app
+
+# Copy workspace files
+COPY package.json package-lock.json* ./
+COPY backend/package.json backend/
+COPY shared/ shared/
+
+# Install backend deps
+RUN npm ci --workspace=backend
+
+# Copy backend source
+COPY backend/ backend/
+
+# Build
+RUN npm run build --workspace=backend
+
+# ---- Stage 2: Production ----
+FROM node:20-slim
+
+# Install Python for inference
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends python3 python3-pip python3-venv && \
+    rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Copy built backend
+COPY --from=builder /app/backend/dist ./backend/dist
+COPY --from=builder /app/backend/package.json ./backend/
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/shared ./shared
+
+# Copy inference code
+COPY inference/ ./inference/
+
+# Install Python deps
+RUN pip3 install --no-cache-dir --break-system-packages -r inference/requirements.txt
+
+# Runtime
+ENV NODE_ENV=production
+ENV PORT=3001
+EXPOSE 3001
+
+CMD ["node", "backend/dist/server.js"]
