@@ -1,0 +1,11 @@
+[providers]
+  nixpacks = ["node", "python"]
+
+[phases.setup]
+  nixPkgs = ["nodejs_20", "python311"]
+
+[phases.install]
+  cmds = ["npm ci", "pip install -r requirements.txt"]
+
+[start]
+  cmd = "node src/server.js"
