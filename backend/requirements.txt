@@ -1,3 +1,7 @@
+# CPU-only PyTorch — keeps image under 4GB for Railway free tier
+--extra-index-url https://download.pytorch.org/whl/cpu
 torch>=2.0.0
 numpy>=1.24.0
-sentence-transformers>=2.2.0
+# NOTE: sentence-transformers is NOT needed when ENABLE_LABSE=false
+# To enable LaBSE later, uncomment below (requires Railway Pro plan for RAM):
+# sentence-transformers>=2.2.0
